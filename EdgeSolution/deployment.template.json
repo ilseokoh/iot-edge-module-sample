@@ -66,6 +66,16 @@
               "image": "${MODULES.SimulatedDeviceModule}",
               "createOptions": {}
             }
+          },
+          "MetricsCollector": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "veyalla/metricscollector:0.0.5-amd64",
+              "createOptions": {}
+            }
           }
         }
       }
@@ -74,7 +84,8 @@
       "properties.desired": {
         "schemaVersion": "1.0",
         "routes": {
-          "sensorToSimulatedDeviceModule": "FROM /messages/modules/SimulatedDeviceModule/outputs/* INTO $upstream"
+          "sensorToSimulatedDeviceModule": "FROM /messages/modules/SimulatedDeviceModule/outputs/* INTO $upstream",
+          "MetricsCollectorToIoTHub": "FROM /messages/modules/MetricsCollector/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
