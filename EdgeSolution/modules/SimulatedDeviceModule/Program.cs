@@ -8,8 +8,11 @@ namespace SimulatedDeviceModule
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Timers;
     using Microsoft.Azure.Devices.Client;
     using Microsoft.Azure.Devices.Client.Transport.Mqtt;
+    using Newtonsoft.Json;
+    using SimulatedTemperatureSensor;
 
     class Program
     {
@@ -51,7 +54,38 @@ namespace SimulatedDeviceModule
             Console.WriteLine("IoT Hub module client initialized.");
 
             // Register callback to be called when a message is received by the module
-            await ioTHubModuleClient.SetInputMessageHandlerAsync("input1", PipeMessage, ioTHubModuleClient);
+            //await ioTHubModuleClient.SetInputMessageHandlerAsync("input1", PipeMessage, ioTHubModuleClient);
+
+            // Create a timer with 10 seconds interval.
+            var aTimer = new System.Timers.Timer(10000);
+            // Hook up the Elapsed event for the timer. 
+            aTimer.Elapsed += async ( sender, e ) => await SendMessage(ioTHubModuleClient);
+            aTimer.AutoReset = true;
+            aTimer.Enabled = true;
+
+        }
+
+        static async Task<MessageResponse> SendMessage(ModuleClient moduleClient)
+        {
+            var body = new MessageBody() 
+            {
+                TimeCreated = DateTime.UtcNow,
+                Machine = new Machine() {
+                    Pressure = 1,
+                    Temperature = 1
+                },
+                Ambient = new Ambient() {
+                    Humidity = 1, 
+                    Temperature = 1
+                }
+            };
+
+            var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(body)));
+
+
+            await moduleClient.SendEventAsync("output1", msg);
+
+            return MessageResponse.Completed;
         }
 
         /// <summary>
