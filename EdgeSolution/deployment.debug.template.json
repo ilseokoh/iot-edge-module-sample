@@ -14,6 +14,11 @@
                 "username": "$CONTAINER_REGISTRY_USERNAME_iloh123reg",
                 "password": "$CONTAINER_REGISTRY_PASSWORD_iloh123reg",
                 "address": "iloh123reg.azurecr.io"
+              },
+              "ilohcr1234": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_ilohcr1234",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_ilohcr1234",
+                "address": "ilohcr1234.azurecr.io"
               }
             }
           }
@@ -76,6 +81,16 @@
               "image": "mcr.microsoft.com/azureiotedge-simulated-temperature-sensor:1.0",
               "createOptions": {}
             }
+          },
+          "Watchdog": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.Watchdog.debug}",
+              "createOptions": {}
+            }
           }
         }
       }
@@ -85,7 +100,8 @@
         "schemaVersion": "1.0",
         "routes": {
           "SimulatedDeviceModuleToIoTHub": "FROM /messages/modules/SimulatedDeviceModule/outputs/* INTO $upstream",
-          "sensorToSimulatedDeviceModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/SimulatedDeviceModule/inputs/input1\")"
+          "sensorToSimulatedDeviceModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/SimulatedDeviceModule/inputs/input1\")",
+          "WatchdogToIoTHub": "FROM /messages/modules/Watchdog/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

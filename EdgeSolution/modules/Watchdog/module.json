@@ -1,8 +1,8 @@
 {
-    "$schema-version": "0.0.2",
+    "$schema-version": "0.0.1",
     "description": "",
     "image": {
-        "repository": "ilohcr1234.azurecr.io/simulateddevicemodule",
+        "repository": "ilohcr1234.azurecr.io/watchdog",
         "tag": {
             "version": "0.0.1",
             "platforms": {
